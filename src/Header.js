@@ -4,11 +4,16 @@ import {Link} from "react-router-dom"
 import SearchIcon from "@mui/icons-material/Search"
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket"
 import { useStateValue } from './Stateprovider'
+import { auth } from "./firebase"
 
 function Header() { 
-    const [{ basket }] = useStateValue();
+    const [{ basket, user }, dispatch] = useStateValue();
 
-    console.log(basket);
+    const handleAuthentication = () => {
+        if(user){
+            auth.signOut();
+        }
+    }
   return (
     <nav className='header'>
         {/* logo on the left -> image*/}
@@ -30,10 +35,12 @@ function Header() {
 
         <div className='header-nav'>
          {/* 1st Link*/}
-         <Link to="/login" className='header-link'>
-            <div className='header-option'>
-                <span className='header-optionlineone'>Hello User</span>
-                <span className='header-optionlinetwo'>Sign In</span>
+         <Link to={!user && "/login"} className='header-link'>
+            <div onClick={handleAuthentication}  
+            className='header-option'>
+                {/* user?.email || "Guest" */}
+                <span className='header-optionlineone'>Hello { !user ? 'Guest' : user.email}</span>
+                <span className='header-optionlinetwo'>{ user ? 'Sign Out' : 'Sign In'}</span>
             </div>
          </Link>
 
